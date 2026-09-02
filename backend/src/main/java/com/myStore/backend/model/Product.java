@@ -48,7 +48,7 @@ public class Product {
     private Boolean isActive = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manufacturer_id")
+    @JoinColumn(name = "manufacturer_id", nullable = false)
     private Manufacturer manufacturer;
 
     @ManyToMany(fetch = FetchType.LAZY)
