@@ -73,14 +73,7 @@ public class ManufacturerServiceImpl implements ManufacturerService {
         return mapToResponseDTO(updatedManufacturer);
     }
 
-    @Override
-    @Transactional
-    public void deleteManufacturer(UUID id) {
-        if (!manufacturerRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Manufacturer not found with ID: " + id);
-        }
-        manufacturerRepository.deleteById(id);
-    }
+    
 
     private ManufacturerResponseDTO mapToResponseDTO(Manufacturer manufacturer) {
         return new ManufacturerResponseDTO(

@@ -16,5 +16,4 @@ public interface ManufacturerService {
 
     ManufacturerResponseDTO updateManufacturer(UUID id, ManufacturerRequestDTO dto);
 
-    void deleteManufacturer(UUID id);
 }
