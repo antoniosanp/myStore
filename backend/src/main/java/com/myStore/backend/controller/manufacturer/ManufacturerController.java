@@ -70,4 +70,5 @@ public class ManufacturerController {
         ManufacturerResponseDTO response = manufacturerService.updateManufacturer(id, dto);
         return ResponseEntity.ok(response);
     }
+
 }
