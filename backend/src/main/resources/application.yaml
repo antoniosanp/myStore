@@ -6,3 +6,10 @@ security:
   jwt:
     secret-key: ${JWT_SECRET}
     expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
