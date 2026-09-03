@@ -30,7 +30,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     @Transactional
     public RefreshToken createRefreshToken(User user) {
-        // Option: Revoke active tokens for user when a new login occurs
         refreshTokenRepository.revokeAllByUser(user);
 
         RefreshToken refreshToken = RefreshToken.builder()

@@ -4,11 +4,13 @@ import com.myStore.backend.dto.auth.AuthResponseDTO;
 import com.myStore.backend.dto.auth.LoginRequestDTO;
 import com.myStore.backend.dto.auth.RegisterRequestDTO;
 import com.myStore.backend.exception.DuplicateResourceException;
+import com.myStore.backend.model.RefreshToken;
 import com.myStore.backend.model.User;
 import com.myStore.backend.model.enums.RoleEnum;
 import com.myStore.backend.repository.UserRepository;
 import com.myStore.backend.security.JwtUtils;
 import com.myStore.backend.service.auth.AuthService;
+import com.myStore.backend.service.auth.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     @Transactional
@@ -46,10 +49,11 @@ public class AuthServiceImpl implements AuthService {
         User savedUser = userRepository.save(user);
 
         String token = jwtUtils.generateTokenFromUsername(savedUser.getEmail());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(savedUser);
 
         return new AuthResponseDTO(
                 token,
-                null,
+                refreshToken.getToken(),
                 "Bearer",
                 savedUser.getEmail(),
                 savedUser.getRole()
@@ -57,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public AuthResponseDTO login(LoginRequestDTO dto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.email(), dto.password())
@@ -65,15 +70,17 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = jwtUtils.generateJwtToken(authentication);
-
         User user = (User) authentication.getPrincipal();
+
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
         return new AuthResponseDTO(
                 token,
-                null,
+                refreshToken.getToken(),
                 "Bearer",
                 user.getEmail(),
                 user.getRole()
         );
     }
 }
+
