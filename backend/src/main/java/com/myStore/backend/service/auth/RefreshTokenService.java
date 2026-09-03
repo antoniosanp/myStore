@@ -5,13 +5,11 @@ import com.myStore.backend.dto.auth.RefreshTokenResponseDTO;
 import com.myStore.backend.model.RefreshToken;
 import com.myStore.backend.model.User;
 
-import java.util.Optional;
-
 public interface RefreshTokenService {
 
     RefreshToken createRefreshToken(User user);
 
-    Optional<RefreshToken> findByToken(String token);
+    RefreshToken findByToken(String token);
 
     RefreshToken verifyExpiration(RefreshToken token);
 

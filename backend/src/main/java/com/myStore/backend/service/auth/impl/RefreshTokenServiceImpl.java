@@ -3,6 +3,7 @@ package com.myStore.backend.service.auth.impl;
 import com.myStore.backend.dto.auth.RefreshTokenRequestDTO;
 import com.myStore.backend.dto.auth.RefreshTokenResponseDTO;
 import com.myStore.backend.exception.BadRequestException;
+import com.myStore.backend.exception.ResourceNotFoundException;
 import com.myStore.backend.model.RefreshToken;
 import com.myStore.backend.model.User;
 import com.myStore.backend.repository.RefreshTokenRepository;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -44,8 +44,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByToken(token);
+    public RefreshToken findByToken(String token) {
+        return refreshTokenRepository.findByToken(token)
+                .orElseThrow(() -> new ResourceNotFoundException("Refresh token not found"));
     }
 
     @Override
@@ -66,14 +67,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     @Transactional
     public RefreshTokenResponseDTO refreshAccessToken(RefreshTokenRequestDTO dto) {
-        return findByToken(dto.refreshToken())
-                .map(this::verifyExpiration)
-                .map(token -> {
-                    User user = token.getUser();
-                    String newAccessToken = jwtUtils.generateTokenFromUsername(user.getEmail());
-                    return new RefreshTokenResponseDTO(newAccessToken, token.getToken());
-                })
-                .orElseThrow(() -> new BadRequestException("Refresh token not found"));
+        RefreshToken token = findByToken(dto.refreshToken());
+        verifyExpiration(token);
+
+        User user = token.getUser();
+        String newAccessToken = jwtUtils.generateTokenFromUsername(user.getEmail());
+        return new RefreshTokenResponseDTO(newAccessToken, token.getToken());
     }
 
     @Override
