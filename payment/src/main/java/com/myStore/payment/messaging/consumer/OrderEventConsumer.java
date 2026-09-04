@@ -1,6 +1,7 @@
 package com.myStore.payment.messaging.consumer;
 
 import com.myStore.payment.messaging.dto.OrderCreatedEventDTO;
+import com.myStore.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
