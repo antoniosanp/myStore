@@ -17,6 +17,9 @@ import com.myStore.backend.repository.UserRepository;
 import com.myStore.backend.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.myStore.backend.messaging.dto.OrderCreatedEventDTO;
+import com.myStore.backend.messaging.dto.OrderItemEventDTO;
+import com.myStore.backend.messaging.producer.OrderEventProducer;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -31,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final OrderEventProducer orderEventProducer;
 
     @Override
     @Transactional
@@ -75,6 +79,25 @@ public class OrderServiceImpl implements OrderService {
 
         order.setTotalAmount(totalAmount);
         Order savedOrder = orderRepository.save(order);
+
+        List<OrderItemEventDTO> eventItems = savedOrder.getItems().stream()
+                .map(item -> new OrderItemEventDTO(
+                        item.getProduct().getId(),
+                        item.getProduct().getName(),
+                        item.getQuantity(),
+                        item.getUnitPrice()
+                ))
+                .collect(Collectors.toList());
+
+        OrderCreatedEventDTO event = new OrderCreatedEventDTO(
+                savedOrder.getId(),
+                savedOrder.getUser().getId(),
+                savedOrder.getTotalAmount(),
+                eventItems,
+                savedOrder.getCreatedAt()
+        );
+
+        orderEventProducer.sendOrderCreatedEvent(event);
 
         return mapToOrderResponseDTO(savedOrder);
     }
