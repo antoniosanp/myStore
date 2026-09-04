@@ -1,0 +1,44 @@
+services:
+  postgres-backend:
+    image: postgres:16-alpine
+    container_name: mystore_postgres_backend
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME_BACKEND:mystore_db}
+      POSTGRES_USER: ${DB_USER_BACKEND:postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD_BACKEND:postgres}
+    ports:
+      - "${DB_PORT_BACKEND:5434}:5432"
+    volumes:
+      - postgres_backend_data:/var/lib/postgresql/data
+
+  postgres-payment:
+    image: postgres:16-alpine
+    container_name: mystore_postgres_payment
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME_PAYMENT:mystore_payments_db}
+      POSTGRES_USER: ${DB_USER_PAYMENT:postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD_PAYMENT:postgres}
+    ports:
+      - "${DB_PORT_PAYMENT:5435}:5432"
+    volumes:
+      - postgres_payment_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: mystore_rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME:guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:guest}
+    ports:
+      - "${RABBITMQ_PORT:5673}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:15673}:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+volumes:
+  postgres_backend_data:
+  postgres_payment_data:
+  rabbitmq_data:
