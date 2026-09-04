@@ -21,14 +21,26 @@ spring:
     baseline-on-migrate: true
     locations: classpath:db/migration
 
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+app:
+  rabbitmq:
+    exchange: orders.exchange
+    order-created-queue: order.created.queue
+    order-created-routing-key: order.created.key
+    payment-completed-queue: payment.completed.queue
+    payment-completed-routing-key: payment.completed.key
+  jwt:
+    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS}
+
 security:
   jwt:
     secret-key: ${JWT_SECRET}
     expiration-ms: ${JWT_EXPIRATION_MS}
-
-app:
-  jwt:
-    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS}
 
 springdoc:
   api-docs:
@@ -36,4 +48,3 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     operationsSorter: method
-
