@@ -37,10 +37,21 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
     @Value("${app.mercadopago.notification-url}")
     private String notificationUrl;
 
+    // Pre-built reusable static back URLs object
+    private PreferenceBackUrlsRequest staticBackUrls;
+
     @PostConstruct
     public void init() {
         MercadoPagoConfig.setAccessToken(accessToken);
-        log.info("Mercado Pago SDK initialized successfully");
+
+        // Initialize immutable static back URLs once during service startup
+        this.staticBackUrls = PreferenceBackUrlsRequest.builder()
+                .success(successBackUrl)
+                .failure(failureBackUrl)
+                .pending(pendingBackUrl)
+                .build();
+
+        log.info("Mercado Pago SDK and static Back URLs initialized successfully");
     }
 
     @Override
@@ -59,15 +70,9 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
                 items.add(item);
             }
 
-            PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                    .success(successBackUrl)
-                    .failure(failureBackUrl)
-                    .pending(pendingBackUrl)
-                    .build();
-
             PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                     .items(items)
-                    .backUrls(backUrls)
+                    .backUrls(staticBackUrls)
                     .autoReturn("approved")
                     .notificationUrl(notificationUrl)
                     .externalReference(orderEvent.orderId().toString())
