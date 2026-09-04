@@ -12,10 +12,4 @@ public record OrderCreatedEventDTO(
         List<OrderItemEventDTO> items,
         Instant createdAt
 ) {
-    public record OrderItemEventDTO(
-            UUID productId,
-            String productName,
-            Integer quantity,
-            BigDecimal unitPrice
-    ) {}
 }
