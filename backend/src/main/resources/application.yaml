@@ -27,6 +27,12 @@ spring:
     username: ${RABBITMQ_USERNAME:guest}
     password: ${RABBITMQ_PASSWORD:guest}
 
+security:
+  jwt:
+    secret-key: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXPIRATION_MS}
+    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS}
+
 app:
   rabbitmq:
     exchange: orders.exchange
@@ -34,13 +40,6 @@ app:
     order-created-routing-key: order.created.key
     payment-completed-queue: payment.completed.queue
     payment-completed-routing-key: payment.completed.key
-  jwt:
-    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS}
-
-security:
-  jwt:
-    secret-key: ${JWT_SECRET}
-    expiration-ms: ${JWT_EXPIRATION_MS}
 
 springdoc:
   api-docs:
