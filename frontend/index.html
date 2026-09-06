@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myStore - Tienda Online & Panel de Gestión</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- App Container -->
+    <div id="app">
+        <!-- TOP BANNER / API STATUS -->
+        <div class="api-status-bar" id="apiStatusBar">
+            <div class="container status-content">
+                <span class="status-indicator offline" id="statusIndicator">
+                    <span class="dot"></span>
+                    <span id="statusText">Modo Demostración (Offline / Mock Data)</span>
+                </span>
+                <div class="status-actions">
+                    <button id="toggleApiModeBtn" class="btn-text-sm" title="Alternar entre API real y datos mock">
+                        <i class="fa-solid fa-arrows-rotate"></i> Probar Conexión Backend
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVIGATION HEADER -->
+        <header class="main-header">
+            <div class="container header-container">
+                <!-- Brand Logo -->
+                <a href="#" class="brand-logo" id="navLogo">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                    <div class="logo-text">
+                        <span class="brand-name">my<span class="highlight">Store</span></span>
+                        <span class="brand-tagline">E-Commerce Suite</span>
+                    </div>
+                </a>
+
+                <!-- Search Bar -->
+                <div class="header-search">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Buscar productos, marcas, categorías..." autocomplete="off">
+                    <button class="clear-search-btn hidden" id="clearSearchBtn"><i class="fa-solid fa-xmark"></i></button>
+                    <!-- Search Results Autocomplete Dropdown -->
+                    <div class="search-results-dropdown hidden" id="searchResultsDropdown"></div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="header-actions">
+                    <!-- Theme Toggle -->
+                    <button class="icon-btn" id="themeToggleBtn" title="Cambiar tema claro/oscuro">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+
+                    <!-- Cart Drawer Trigger -->
+                    <button class="icon-btn cart-btn" id="openCartBtn" title="Ver carrito de compras">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="badge cart-badge hidden" id="cartBadgeCount">0</span>
+                    </button>
+
+                    <!-- User / Auth Menu -->
+                    <div class="user-menu-wrapper" id="userMenuWrapper">
+                        <button class="btn btn-outline" id="openAuthModalBtn">
+                            <i class="fa-regular fa-user"></i> <span>Iniciar Sesión</span>
+                        </button>
+                        <div class="user-dropdown hidden" id="userDropdown">
+                            <div class="user-info-header">
+                                <div class="user-avatar" id="userAvatar">U</div>
+                                <div class="user-details">
+                                    <span class="user-email" id="userEmailText">usuario@ejemplo.com</span>
+                                    <span class="user-role-badge" id="userRoleBadge">ROLE_USER</span>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item" id="navMyOrders">
+                                <i class="fa-solid fa-box-open"></i> Mis Pedidos
+                            </a>
+                            <a href="#" class="dropdown-item hidden" id="navAdminPanel">
+                                <i class="fa-solid fa-sliders"></i> Panel de Administración
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-item" id="logoutBtn">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECONDARY NAVIGATION BAR -->
+            <nav class="sub-nav">
+                <div class="container sub-nav-container">
+                    <ul class="nav-links">
+                        <li><a href="#" class="nav-link active" data-view="catalog"><i class="fa-solid fa-store"></i> Catálogo Completo</a></li>
+                        <li><a href="#" class="nav-link" data-view="categories"><i class="fa-solid fa-layer-group"></i> Categorías</a></li>
+                        <li><a href="#" class="nav-link" data-view="manufacturers"><i class="fa-solid fa-industry"></i> Marcas / Fabricantes</a></li>
+                        <li><a href="#" class="nav-link" data-view="orders" id="myOrdersNavLink"><i class="fa-solid fa-clock-rotate-left"></i> Mis Compras</a></li>
+                        <li class="admin-only hidden" id="adminNavLinkItem"><a href="#" class="nav-link admin-link" data-view="admin"><i class="fa-solid fa-shield-halved"></i> Panel Admin</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <!-- MAIN CONTENT CONTAINER (SPA VIEWS) -->
+        <main class="main-content">
+            <!-- VIEW: CATALOG (HOME) -->
+            <section id="catalogView" class="view-section active">
+                <!-- HERO BANNER -->
+                <div class="hero-banner">
+                    <div class="container hero-content">
+                        <div class="hero-text">
+                            <span class="hero-pill"><i class="fa-solid fa-bolt"></i> Ofertas de Temporada</span>
+                            <h1>Encuentra los Mejores Productos con Envío Rápido</h1>
+                            <p>Explora tecnología, moda, accesorios y más de nuestros principales fabricantes verificados.</p>
+                            <div class="hero-buttons">
+                                <a href="#productGridSection" class="btn btn-primary btn-lg">
+                                    <i class="fa-solid fa-cart-arrow-down"></i> Comprar Ahora
+                                </a>
+                                <button class="btn btn-glass btn-lg" id="heroLearnMoreBtn">
+                                    <i class="fa-solid fa-compass"></i> Explorar Marcas
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hero-graphic">
+                            <div class="glass-card main-hero-card">
+                                <div class="card-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                                <div class="card-info">
+                                    <h4>Envíos Seguros</h4>
+                                    <p>Garantía de entrega y pagos 100% cifrados</p>
+                                </div>
+                            </div>
+                            <div class="glass-card secondary-hero-card">
+                                <div class="card-icon gold"><i class="fa-solid fa-star"></i></div>
+                                <div class="card-info">
+                                    <h4>+1,000 Productos</h4>
+                                    <p>Calidad certificada</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CATEGORIES CHIPS SCRULL -->
+                <div class="container section-padding">
+                    <div class="category-chips-wrapper">
+                        <h3 class="section-subtitle">Categorías Populares</h3>
+                        <div class="category-chips" id="categoryChipsList">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- CATALOG CONTROLS & PRODUCT GRID -->
+                    <div class="catalog-layout" id="productGridSection">
+                        <!-- SIDEBAR FILTERS -->
+                        <aside class="catalog-sidebar">
+                            <div class="sidebar-card">
+                                <div class="sidebar-header">
+                                    <h3><i class="fa-solid fa-sliders"></i> Filtros</h3>
+                                    <button class="btn-text" id="resetFiltersBtn">Limpiar todo</button>
+                                </div>
+
+                                <!-- Filter: Categories -->
+                                <div class="filter-group">
+                                    <label class="filter-title">Categoría</label>
+                                    <select id="categoryFilterSelect" class="form-control">
+                                        <option value="">Todas las categorías</option>
+                                    </select>
+                                </div>
+
+                                <!-- Filter: Manufacturer -->
+                                <div class="filter-group">
+                                    <label class="filter-title">Fabricante / Marca</label>
+                                    <select id="manufacturerFilterSelect" class="form-control">
+                                        <option value="">Todos los fabricantes</option>
+                                    </select>
+                                </div>
+
+                                <!-- Filter: Price Range -->
+                                <div class="filter-group">
+                                    <div class="filter-title-row">
+                                        <label class="filter-title">Precio Máximo</label>
+                                        <span class="price-val" id="priceRangeValue">$1,000,000</span>
+                                    </div>
+                                    <input type="range" id="priceRangeInput" min="0" max="5000" step="50" value="5000" class="range-slider">
+                                </div>
+
+                                <!-- Filter: Stock -->
+                                <div class="filter-group">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="inStockOnlyCheckbox">
+                                        <span class="checkmark"></span>
+                                        <span>Solo disponibles en stock</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </aside>
+
+                        <!-- MAIN GRID AREA -->
+                        <div class="catalog-main">
+                            <div class="catalog-topbar">
+                                <div class="results-count">
+                                    Mostrando <strong id="productCountText">0</strong> productos
+                                </div>
+                                <div class="sort-wrapper">
+                                    <label for="sortSelect">Ordenar por:</label>
+                                    <select id="sortSelect" class="form-control-sm">
+                                        <option value="newest">Más recientes</option>
+                                        <option value="price-asc">Precio: Menor a Mayor</option>
+                                        <option value="price-desc">Precio: Mayor a Menor</option>
+                                        <option value="name-asc">Nombre: A-Z</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- PRODUCTS GRID -->
+                            <div class="products-grid" id="productsGridContainer">
+                                <!-- Dynamic Loading Skeleton or Cards -->
+                            </div>
+
+                            <!-- EMPTY STATE -->
+                            <div class="empty-state hidden" id="noProductsEmptyState">
+                                <i class="fa-solid fa-box-open empty-icon"></i>
+                                <h3>No se encontraron productos</h3>
+                                <p>Prueba a modificar los filtros de búsqueda o seleccionar otra categoría.</p>
+                                <button class="btn btn-outline" id="clearFiltersStateBtn">Restablecer Filtros</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: CATEGORIES GRID -->
+            <section id="categoriesView" class="view-section hidden">
+                <div class="container section-padding">
+                    <div class="view-header">
+                        <h2>Explorar por Categorías</h2>
+                        <p>Encuentra tus artículos favoritos organizados por departamentos.</p>
+                    </div>
+                    <div class="categories-grid" id="categoriesGridContainer"></div>
+                </div>
+            </section>
+
+            <!-- VIEW: MANUFACTURERS GRID -->
+            <section id="manufacturersView" class="view-section hidden">
+                <div class="container section-padding">
+                    <div class="view-header">
+                        <h2>Nuestros Fabricantes & Marcas</h2>
+                        <p>Trabajamos directo con los mejores fabricantes mundiales.</p>
+                    </div>
+                    <div class="manufacturers-grid" id="manufacturersGridContainer"></div>
+                </div>
+            </section>
+
+            <!-- VIEW: USER ORDERS HISTORY -->
+            <section id="ordersView" class="view-section hidden">
+                <div class="container section-padding">
+                    <div class="view-header">
+                        <h2>Historial de Mis Compras</h2>
+                        <p>Consulta el estado de tus pedidos y el detalle de cada compra realizada.</p>
+                    </div>
+
+                    <div id="ordersContent">
+                        <!-- Dynamic list of orders or empty state -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: ADMIN DASHBOARD -->
+            <section id="adminView" class="view-section hidden">
+                <div class="container section-padding">
+                    <div class="admin-header">
+                        <div>
+                            <h2><i class="fa-solid fa-shield-halved"></i> Panel de Administración</h2>
+                            <p>Gestión integral de Inventario, Categorías, Fabricantes y Pedidos del Sistema.</p>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN STATS CARDS -->
+                    <div class="admin-stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue"><i class="fa-solid fa-boxes-stacked"></i></div>
+                            <div class="stat-data">
+                                <span class="stat-label">Total Productos</span>
+                                <h3 id="statTotalProducts">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i class="fa-solid fa-layer-group"></i></div>
+                            <div class="stat-data">
+                                <span class="stat-label">Categorías</span>
+                                <h3 id="statTotalCategories">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple"><i class="fa-solid fa-industry"></i></div>
+                            <div class="stat-data">
+                                <span class="stat-label">Fabricantes</span>
+                                <h3 id="statTotalManufacturers">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange"><i class="fa-solid fa-receipt"></i></div>
+                            <div class="stat-data">
+                                <span class="stat-label">Pedidos Totales</span>
+                                <h3 id="statTotalOrders">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN TABS NAVIGATION -->
+                    <div class="admin-tabs">
+                        <button class="admin-tab-btn active" data-tab="adminProductsTab">
+                            <i class="fa-solid fa-box"></i> Productos
+                        </button>
+                        <button class="admin-tab-btn" data-tab="adminCategoriesTab">
+                            <i class="fa-solid fa-tags"></i> Categorías
+                        </button>
+                        <button class="admin-tab-btn" data-tab="adminManufacturersTab">
+                            <i class="fa-solid fa-building"></i> Fabricantes
+                        </button>
+                        <button class="admin-tab-btn" data-tab="adminOrdersTab">
+                            <i class="fa-solid fa-truck-ramp-box"></i> Pedidos Globales
+                        </button>
+                    </div>
+
+                    <!-- ADMIN TAB: PRODUCTS -->
+                    <div id="adminProductsTab" class="admin-tab-content active">
+                        <div class="tab-actions-bar">
+                            <input type="text" id="adminProductSearch" placeholder="Filtrar por SKU o Nombre..." class="form-control-sm width-300">
+                            <button class="btn btn-primary" id="openCreateProductModalBtn">
+                                <i class="fa-solid fa-plus"></i> Nuevo Producto
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Imagen</th>
+                                        <th>SKU</th>
+                                        <th>Nombre</th>
+                                        <th>Precio</th>
+                                        <th>Stock</th>
+                                        <th>Fabricante</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminProductsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN TAB: CATEGORIES -->
+                    <div id="adminCategoriesTab" class="admin-tab-content hidden">
+                        <div class="tab-actions-bar">
+                            <button class="btn btn-primary" id="openCreateCategoryModalBtn">
+                                <i class="fa-solid fa-plus"></i> Nueva Categoría
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Descripción</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminCategoriesTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN TAB: MANUFACTURERS -->
+                    <div id="adminManufacturersTab" class="admin-tab-content hidden">
+                        <div class="tab-actions-bar">
+                            <button class="btn btn-primary" id="openCreateManufacturerModalBtn">
+                                <i class="fa-solid fa-plus"></i> Nuevo Fabricante
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Dirección / Origen</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminManufacturersTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN TAB: GLOBAL ORDERS -->
+                    <div id="adminOrdersTab" class="admin-tab-content hidden">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Pedido</th>
+                                        <th>Usuario ID</th>
+                                        <th>Monto Total</th>
+                                        <th>Estado</th>
+                                        <th>Fecha</th>
+                                        <th>Items</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminOrdersTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="main-footer">
+            <div class="container footer-content">
+                <div class="footer-col">
+                    <div class="brand-logo footer-logo">
+                        <div class="logo-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                        <span class="brand-name">my<span class="highlight">Store</span></span>
+                    </div>
+                    <p>Plataforma e-commerce moderna desarrollada con arquitectura de microservicios Java Spring Boot y Frontend interactivo.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navegación</h4>
+                    <ul>
+                        <li><a href="#" data-view="catalog">Catálogo de Productos</a></li>
+                        <li><a href="#" data-view="categories">Categorías</a></li>
+                        <li><a href="#" data-view="manufacturers">Fabricantes</a></li>
+                        <li><a href="#" data-view="orders">Mis Compras</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>API Backend Endpoints</h4>
+                    <ul>
+                        <li><code>/api/v1/products</code></li>
+                        <li><code>/api/v1/categories</code></li>
+                        <li><code>/api/v1/manufacturers</code></li>
+                        <li><code>/api/v1/orders</code></li>
+                        <li><code>/api/v1/auth</code></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Información de Conexión</h4>
+                    <p id="footerConnectionInfo">Backend Target: <code>http://localhost:8080</code></p>
+                    <p><i class="fa-solid fa-lock"></i> Autenticación segura mediante tokens JWT.</p>
+                </div>
+            </div>
+            <div class="footer-bottom container">
+                <p>&copy; 2026 myStore Inc. Todos los derechos reservados.</p>
+            </div>
+        </footer>
+
+        <!-- CART SLIDE-OVER DRAWER -->
+        <div class="cart-drawer-overlay hidden" id="cartOverlay"></div>
+        <div class="cart-drawer hidden" id="cartDrawer">
+            <div class="cart-header">
+                <h3><i class="fa-solid fa-cart-shopping"></i> Carrito de Compras</h3>
+                <button class="close-btn" id="closeCartBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-body" id="cartBodyItems">
+                <!-- Cart items list dynamically injected -->
+            </div>
+            <div class="cart-footer">
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="cartSubtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Impuestos (0%):</span>
+                        <span>$0.00</span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span>Total:</span>
+                        <strong id="cartTotal">$0.00</strong>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block btn-lg" id="proceedCheckoutBtn">
+                    Proceder al Pago <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <button class="btn btn-outline btn-block" id="clearCartBtn">Vaciar Carrito</button>
+            </div>
+        </div>
+
+        <!-- MODAL: PRODUCT DETAILS QUICK VIEW -->
+        <div class="modal-overlay hidden" id="productModalOverlay">
+            <div class="modal-card modal-lg">
+                <button class="modal-close-btn" id="closeProductModalBtn"><i class="fa-solid fa-xmark"></i></button>
+                <div class="product-modal-grid" id="productModalContent">
+                    <!-- Dynamic rendering -->
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: CHECKOUT / PAYMENT FORM -->
+        <div class="modal-overlay hidden" id="checkoutModalOverlay">
+            <div class="modal-card modal-md">
+                <button class="modal-close-btn" id="closeCheckoutModalBtn"><i class="fa-solid fa-xmark"></i></button>
+                <div class="modal-header">
+                    <h2><i class="fa-solid fa-credit-card"></i> Finalizar Compra</h2>
+                    <p>Completa tus datos para procesar la orden de compra.</p>
+                </div>
+                <form id="checkoutForm">
+                    <div class="form-section">
+                        <h4>1. Datos de Entrega</h4>
+                        <div class="form-row">
+                            <div class="form-group col-6">
+                                <label>Nombre Completo</label>
+                                <input type="text" id="shippingName" class="form-control" placeholder="Ej: Carlos Pérez" required>
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Teléfono</label>
+                                <input type="tel" id="shippingPhone" class="form-control" placeholder="+57 300 000 0000" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Dirección de Envío</label>
+                            <input type="text" id="shippingAddress" class="form-control" placeholder="Calle 100 # 15-20, Apto 302" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>2. Método de Pago</h4>
+                        <div class="payment-methods-grid">
+                            <label class="payment-method-card active">
+                                <input type="radio" name="paymentMethod" value="CREDIT_CARD" checked>
+                                <i class="fa-solid fa-credit-card"></i>
+                                <span>Tarjeta de Crédito</span>
+                            </label>
+                            <label class="payment-method-card">
+                                <input type="radio" name="paymentMethod" value="PSE_TRANSFER">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>Transferencia / PSE</span>
+                            </label>
+                            <label class="payment-method-card">
+                                <input type="radio" name="paymentMethod" value="CASH_ON_DELIVERY">
+                                <i class="fa-solid fa-money-bill-wave"></i>
+                                <span>Pago en Efectivo</span>
+                            </label>
+                        </div>
+
+                        <div id="creditCardFields" class="form-group-box">
+                            <div class="form-group">
+                                <label>Número de Tarjeta</label>
+                                <input type="text" id="cardNumber" class="form-control" placeholder="4532 •••• •••• 8892" maxlength="19">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6">
+                                    <label>Expiración (MM/AA)</label>
+                                    <input type="text" id="cardExpiry" class="form-control" placeholder="12/28" maxlength="5">
+                                </div>
+                                <div class="form-group col-6">
+                                    <label>CVC</label>
+                                    <input type="text" id="cardCvc" class="form-control" placeholder="123" maxlength="4">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-summary-box">
+                        <div class="summary-line">
+                            <span>Monto Total a Pagar:</span>
+                            <strong id="checkoutTotalAmount">$0.00</strong>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer-actions">
+                        <button type="button" class="btn btn-outline" id="cancelCheckoutBtn">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btn-lg" id="submitOrderBtn">
+                            <i class="fa-solid fa-check-circle"></i> Confirmar y Pagar Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: AUTHENTICATION (LOGIN / REGISTER) -->
+        <div class="modal-overlay hidden" id="authModalOverlay">
+            <div class="modal-card modal-sm">
+                <button class="modal-close-btn" id="closeAuthModalBtn"><i class="fa-solid fa-xmark"></i></button>
+                <div class="auth-tabs">
+                    <button class="auth-tab-btn active" id="loginTabBtn">Iniciar Sesión</button>
+                    <button class="auth-tab-btn" id="registerTabBtn">Registrarse</button>
+                </div>
+
+                <!-- LOGIN FORM -->
+                <form id="loginForm" class="auth-form active">
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="loginEmail" class="form-control" placeholder="admin@mystore.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <div class="demo-credentials-box">
+                        <p><i class="fa-solid fa-circle-info"></i> Demo Cuentas Rápidad:</p>
+                        <div class="demo-chips">
+                            <button type="button" class="chip-btn" id="demoAdminBtn">Admin: admin@mystore.com</button>
+                            <button type="button" class="chip-btn" id="demoUserBtn">Cliente: user@mystore.com</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">Ingresar</button>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="registerForm" class="auth-form hidden">
+                    <div class="form-group">
+                        <label>Nombre Completo</label>
+                        <input type="text" id="regName" class="form-control" placeholder="Juan Pérez" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="regEmail" class="form-control" placeholder="juan@ejemplo.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="regPassword" class="form-control" placeholder="Mínimo 6 caracteres" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rol de Usuario</label>
+                        <select id="regRole" class="form-control">
+                            <option value="ROLE_USER">Cliente / Comprador</option>
+                            <option value="ROLE_ADMIN">Administrador</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">Crear Cuenta</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: ADMIN PRODUCT CREATE / EDIT -->
+        <div class="modal-overlay hidden" id="adminProductModalOverlay">
+            <div class="modal-card modal-md">
+                <button class="modal-close-btn" id="closeAdminProductModalBtn"><i class="fa-solid fa-xmark"></i></button>
+                <div class="modal-header">
+                    <h3 id="adminProductModalTitle">Crear Nuevo Producto</h3>
+                </div>
+                <form id="adminProductForm">
+                    <input type="hidden" id="adminProductId">
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label>Código SKU *</label>
+                            <input type="text" id="adminProdSku" class="form-control" placeholder="SKU-PROD-001" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Nombre del Producto *</label>
+                            <input type="text" id="adminProdName" class="form-control" placeholder="Smartphone Galaxy Ultra" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea id="adminProdDesc" class="form-control" rows="3" placeholder="Detalles de especificaciones..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label>Precio ($) *</label>
+                            <input type="number" step="0.01" id="adminProdPrice" class="form-control" placeholder="299.99" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Stock Disponible *</label>
+                            <input type="number" id="adminProdStock" class="form-control" placeholder="50" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>URL Imagen del Producto</label>
+                        <input type="url" id="adminProdImage" class="form-control" placeholder="https://images.unsplash.com/...">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label>Fabricante *</label>
+                            <select id="adminProdManufacturer" class="form-control" required></select>
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Categorías (Multi-selección) *</label>
+                            <select id="adminProdCategories" class="form-control" multiple size="3" required></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer-actions">
+                        <button type="button" class="btn btn-outline" id="cancelAdminProductBtn">Cancelar</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Guardar Producto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: ADMIN CATEGORY CREATE -->
+        <div class="modal-overlay hidden" id="adminCategoryModalOverlay">
+            <div class="modal-card modal-sm">
+                <button class="modal-close-btn" id="closeAdminCategoryModalBtn"><i class="fa-solid fa-xmark"></i></button>
+                <div class="modal-header">
+                    <h3>Nueva Categoría</h3>
+                </div>
+                <form id="adminCategoryForm">
+                    <div class="form-group">
+                        <label>Nombre de Categoría *</label>
+                        <input type="text" id="adminCatName" class="form-control" placeholder="Tecnología" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <input type="text" id="adminCatDesc" class="form-control" placeholder="Dispositivos y gadgets">
+                    </div>
+                    <div class="modal-footer-actions">
+                        <button type="button" class="btn btn-outline" id="cancelAdminCategoryBtn">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Categoría</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: ADMIN MANUFACTURER CREATE -->
+        <div class="modal-overlay hidden" id="adminManufacturerModalOverlay">
+            <div class="modal-card modal-sm">
+                <button class="modal-close-btn" id="closeAdminManufacturerModalBtn"><i class="fa-solid fa-xmark"></i></button>
+                <div class="modal-header">
+                    <h3>Nuevo Fabricante / Marca</h3>
+                </div>
+                <form id="adminManufacturerForm">
+                    <div class="form-group">
+                        <label>Nombre del Fabricante *</label>
+                        <input type="text" id="adminManufName" class="form-control" placeholder="Sony Tech Inc" required>
+                    </div>
+                    <div class="form-group">
+                        <label>País / Dirección</label>
+                        <input type="text" id="adminManufAddress" class="form-control" placeholder="Japón / EE.UU.">
+                    </div>
+                    <div class="modal-footer-actions">
+                        <button type="button" class="btn btn-outline" id="cancelAdminManufacturerBtn">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Fabricante</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TOAST NOTIFICATIONS CONTAINER -->
+        <div class="toast-container" id="toastContainer"></div>
+    </div>
+
+    <!-- APPLICATION SCRIPTS -->
+    <script src="js/config.js"></script>
+    <script src="js/mockData.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
