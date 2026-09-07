@@ -167,8 +167,10 @@ const Components = {
             </div>
         `).join('');
 
+        const isPending = order.status === 'PENDING';
+
         return `
-            <div class="order-card">
+            <div class="order-card" data-order-id="${order.id}">
                 <div class="order-card-header">
                     <div>
                         <div class="order-id">Orden #${order.id}</div>
@@ -179,9 +181,16 @@ const Components = {
                 <div class="order-items-list">
                     ${itemsHtml}
                 </div>
-                <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1.1rem; border-top: 1px dashed var(--border-color); padding-top: 0.75rem;">
-                    <span>Total Pagado:</span>
-                    <span style="color: var(--primary);">${this.formatCurrency(order.totalAmount)}</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 1.1rem; border-top: 1px dashed var(--border-color); padding-top: 0.75rem;">
+                    <div>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Total: </span>
+                        <span style="color: var(--primary);">${this.formatCurrency(order.totalAmount)}</span>
+                    </div>
+                    ${isPending ? `
+                        <button class="btn btn-primary btn-sm pay-mercadopago-btn" data-order-id="${order.id}">
+                            <i class="fa-solid fa-credit-card"></i> Pagar con Mercado Pago
+                        </button>
+                    ` : ''}
                 </div>
             </div>
         `;

@@ -479,12 +479,23 @@ function setupEventListeners() {
             };
 
             const createdOrder = await window.apiService.createOrder(orderPayload);
-
             window.appState.clearCart();
             closeCheckout();
-            window.Components.showToast(`¡Orden #${createdOrder.id} realizada con éxito!`, "success");
 
-            // Switch view to Orders
+            window.Components.showToast(`Orden #${createdOrder.id} creada. Consultando pasarela de pago...`, "warning");
+
+            // Wait 1.2s for RabbitMQ & Payment microservice to process order
+            await new Promise(resolve => setTimeout(resolve, 1200));
+
+            const payment = await window.apiService.getPaymentForOrder(createdOrder.id);
+
+            if (payment && payment.initPoint) {
+                window.Components.showToast(`¡Redirigiendo a Mercado Pago!`, "success");
+                window.open(payment.initPoint, '_blank');
+            } else {
+                window.Components.showToast(`¡Orden #${createdOrder.id} realizada con éxito!`, "success");
+            }
+
             switchView('orders');
 
         } catch (err) {
@@ -558,13 +569,13 @@ function setupEventListeners() {
 
     // Demo Accounts Quick Fill
     document.getElementById('demoAdminBtn')?.addEventListener('click', () => {
-        document.getElementById('loginEmail').value = 'admin@mystore.com';
-        document.getElementById('loginPassword').value = 'admin123';
+        document.getElementById('loginEmail').value = 'admin@mystore.example.com';
+        document.getElementById('loginPassword').value = 'password';
     });
 
     document.getElementById('demoUserBtn')?.addEventListener('click', () => {
-        document.getElementById('loginEmail').value = 'user@mystore.com';
-        document.getElementById('loginPassword').value = 'user123';
+        document.getElementById('loginEmail').value = 'customer@mystore.example.com';
+        document.getElementById('loginPassword').value = 'password';
     });
 
     // Login Submit
@@ -799,6 +810,31 @@ function setupEventListeners() {
                 populateFilterDropdowns();
                 renderAdminManufacturersTable();
                 window.Components.showToast("Fabricante eliminado.", "warning");
+            }
+        }
+    });
+
+    // Pay with Mercado Pago button listener on user orders view
+    document.getElementById('ordersContent')?.addEventListener('click', async (e) => {
+        const payBtn = e.target.closest('.pay-mercadopago-btn');
+        if (payBtn) {
+            const orderId = payBtn.getAttribute('data-order-id');
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cargando...';
+
+            try {
+                const payment = await window.apiService.getPaymentForOrder(orderId);
+                if (payment && payment.initPoint) {
+                    window.open(payment.initPoint, '_blank');
+                    window.Components.showToast("Redirigiendo a pasarela de Mercado Pago.", "success");
+                } else {
+                    window.Components.showToast("No se encontró preferencia de pago para esta orden.", "warning");
+                }
+            } catch (err) {
+                window.Components.showToast("Error al obtener datos de pago.", "error");
+            } finally {
+                payBtn.disabled = false;
+                payBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pagar con Mercado Pago';
             }
         }
     });

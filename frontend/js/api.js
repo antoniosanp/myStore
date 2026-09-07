@@ -284,6 +284,17 @@ class ApiService {
         });
     }
 
+    async getPaymentForOrder(orderId) {
+        try {
+            const response = await fetch(`http://localhost:8081/api/v1/payments/order/${orderId}`);
+            if (!response.ok) return null;
+            return await response.json();
+        } catch (e) {
+            console.warn("[API] Could not fetch payment info for order:", e);
+            return null;
+        }
+    }
+
     // --- AUTH API ---
     async login(email, password) {
         if (this.useMock) {
@@ -302,19 +313,19 @@ class ApiService {
         });
     }
 
-    async register(name, email, password, role = 'ROLE_USER') {
+    async register(firstName, lastName, email, password) {
         if (this.useMock) {
             return {
                 accessToken: 'mock_jwt_access_token_' + Date.now(),
                 refreshToken: 'mock_jwt_refresh_token_' + Date.now(),
                 tokenType: 'Bearer',
                 email: email,
-                role: role
+                role: 'ROLE_USER'
             };
         }
         return await this.request('/auth/register', {
             method: 'POST',
-            body: JSON.stringify({ name, email, password, role })
+            body: JSON.stringify({ firstName, lastName, email, password })
         });
     }
 }

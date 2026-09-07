@@ -17,6 +17,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/payments")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @Tag(name = "Payments", description = "Endpoints for payment webhooks and status inquiries")
 public class PaymentWebhookController {
 
