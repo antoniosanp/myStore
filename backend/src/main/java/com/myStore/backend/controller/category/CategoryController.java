@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasRole('ADMIN')")
     @Operation(summary = "Create a new category", description = "Creates a new category with a unique name.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Category created successfully"),
@@ -56,6 +58,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasRole('ADMIN')")
     @Operation(summary = "Update an existing category", description = "Updates category details by ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Category updated successfully"),
@@ -72,6 +75,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasRole('ADMIN')")
     @Operation(summary = "Delete a category", description = "Deletes a category by its ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Category deleted successfully"),
