@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasRole('ADMIN')")
     @Operation(summary = "Create a new product", description = "Creates a new product with associated manufacturer and categories.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Product created successfully"),
@@ -68,6 +70,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasRole('ADMIN')")
     @Operation(summary = "Update an existing product", description = "Updates product details by ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product updated successfully"),
@@ -84,6 +87,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasRole('ADMIN')")
     @Operation(summary = "Soft delete a product", description = "Deactivates a product by setting its status to inactive.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Product deactivated successfully"),

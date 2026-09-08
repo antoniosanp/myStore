@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class ManufacturerController {
     private final ManufacturerService manufacturerService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasRole('ADMIN')")
     @Operation(summary = "Create a new manufacturer", description = "Creates a new manufacturer with a unique name.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Manufacturer created successfully"),
@@ -56,6 +58,7 @@ public class ManufacturerController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasRole('ADMIN')")
     @Operation(summary = "Update an existing manufacturer", description = "Updates manufacturer details by ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Manufacturer updated successfully"),
