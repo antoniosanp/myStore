@@ -79,7 +79,7 @@ INSERT INTO product_categories (product_id, category_id) VALUES
 INSERT INTO users (email, password_hash, first_name, last_name, role, is_enabled) VALUES
 (
     'admin@mystore.example.com',
-    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+    '$2a$10$zeWEPu81nX75B1SQDACe4OYxirI/mOcSu8r0Y66Ntu7xgoVcSO4ZK',
     'Admin',
     'User',
     'ROLE_ADMIN',
@@ -87,7 +87,7 @@ INSERT INTO users (email, password_hash, first_name, last_name, role, is_enabled
 ),
 (
     'customer@mystore.example.com',
-    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+    '$2a$10$zeWEPu81nX75B1SQDACe4OYxirI/mOcSu8r0Y66Ntu7xgoVcSO4ZK',
     'Alex',
     'Smith',
     'ROLE_USER',
