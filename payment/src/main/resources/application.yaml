@@ -43,7 +43,7 @@ app:
       success: http://localhost:3000/payment/success
       failure: http://localhost:3000/payment/failure
       pending: http://localhost:3000/payment/pending
-    notification-url: http://localhost:8081/api/v1/payments/webhook
+    notification-url: ${MERCADOPAGO_NOTIFICATION_URL}
 
 springdoc:
   api-docs:
