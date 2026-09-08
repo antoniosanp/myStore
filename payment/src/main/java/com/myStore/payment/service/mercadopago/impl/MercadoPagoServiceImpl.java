@@ -65,40 +65,27 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
                         .title(itemDTO.productName())
                         .quantity(itemDTO.quantity())
                         .unitPrice(itemDTO.unitPrice())
-                        .currencyId("COP")
+                        .currencyId("USD")
                         .build();
                 items.add(item);
             }
 
-            PreferenceRequest.PreferenceRequestBuilder preferenceBuilder = PreferenceRequest.builder()
+            PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                     .items(items)
-                    .externalReference(orderEvent.orderId().toString());
+                    .backUrls(staticBackUrls)
+                    .autoReturn("approved")
+                    .notificationUrl(notificationUrl)
+                    .externalReference(orderEvent.orderId().toString())
+                    .build();
 
-            // Mercado Pago API rejects 'localhost' URLs in backUrls and notificationUrl
-            if (successBackUrl != null && !successBackUrl.contains("localhost")) {
-                preferenceBuilder.backUrls(staticBackUrls).autoReturn("approved");
-            }
-
-            if (notificationUrl != null && !notificationUrl.contains("localhost")) {
-                preferenceBuilder.notificationUrl(notificationUrl);
-            }
-
-            PreferenceRequest preferenceRequest = preferenceBuilder.build();
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
 
-            log.info("Created Mercado Pago preference for order ID: {}. InitPoint: {}", orderEvent.orderId(), preference.getInitPoint());
+            log.info("Created Mercado Pago preference for order ID: {}", orderEvent.orderId());
             return preference.getInitPoint();
 
-        } catch (MPApiException e) {
-            log.error("Mercado Pago API Exception for order ID {}: HTTP {} - Content: {}", 
-                    orderEvent.orderId(), 
-                    e.getStatusCode(), 
-                    e.getApiResponse() != null ? e.getApiResponse().getContent() : e.getMessage(), 
-                    e);
-            throw new RuntimeException("Error processing Mercado Pago preference: " + e.getMessage(), e);
-        } catch (MPException e) {
-            log.error("Mercado Pago Exception for order ID {}: {}", orderEvent.orderId(), e.getMessage(), e);
+        } catch (MPException | MPApiException e) {
+            log.error("Error creating Mercado Pago preference for order ID {}: {}", orderEvent.orderId(), e.getMessage(), e);
             throw new RuntimeException("Error processing Mercado Pago preference", e);
         }
     }

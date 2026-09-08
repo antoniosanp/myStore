@@ -36,13 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
             return paymentRepository.findByOrderId(orderEvent.orderId()).get();
         }
 
-        String initPoint;
-        try {
-            initPoint = mercadoPagoService.createPaymentPreference(orderEvent);
-        } catch (Exception e) {
-            log.warn("Could not create Mercado Pago preference for order ID {}: {}. Using fallback checkout URL.", orderEvent.orderId(), e.getMessage());
-            initPoint = "https://sandbox.mercadopago.com/checkout/v1/redirect?pref_id=mock-" + orderEvent.orderId();
-        }
+        String initPoint = mercadoPagoService.createPaymentPreference(orderEvent);
 
         Payment payment = Payment.builder()
                 .orderId(orderEvent.orderId())
@@ -53,44 +47,13 @@ public class PaymentServiceImpl implements PaymentService {
                 .initPoint(initPoint)
                 .build();
 
-        Payment savedPayment = paymentRepository.save(payment);
-        log.info("Successfully created payment record with ID: {} for order ID: {}", savedPayment.getId(), orderEvent.orderId());
-        return savedPayment;
+        return paymentRepository.save(payment);
     }
 
     @Override
     @Transactional
     public void processWebhookNotification(Map<String, Object> payload) {
         log.info("Received Mercado Pago webhook notification: {}", payload);
-
-        // Support direct simulation payload: { "orderId": "UUID", "status": "PAID" }
-        if (payload.containsKey("orderId")) {
-            try {
-                UUID orderId = UUID.fromString(payload.get("orderId").toString());
-                Payment payment = paymentRepository.findByOrderId(orderId).orElse(null);
-                if (payment != null) {
-                    payment.setStatus(PaymentStatusEnum.APPROVED);
-                    payment.setTransactionId("TX-MOCK-" + System.currentTimeMillis());
-                    paymentRepository.save(payment);
-
-                    PaymentCompletedEventDTO completedEvent = new PaymentCompletedEventDTO(
-                            payment.getOrderId(),
-                            payment.getId(),
-                            "PAID",
-                            payment.getProvider(),
-                            payment.getTransactionId(),
-                            payment.getAmount(),
-                            Instant.now()
-                    );
-
-                    paymentEventProducer.sendPaymentCompletedEvent(completedEvent);
-                    log.info("Direct test payment approved for order ID: {}", orderId);
-                    return;
-                }
-            } catch (Exception e) {
-                log.warn("Failed direct webhook simulation: {}", e.getMessage());
-            }
-        }
 
         String action = (String) payload.get("action");
         String type = (String) payload.get("type");
@@ -100,12 +63,8 @@ public class PaymentServiceImpl implements PaymentService {
             if (dataObj instanceof Map<?, ?> dataMap) {
                 Object idObj = dataMap.get("id");
                 if (idObj != null) {
-                    try {
-                        Long mpPaymentId = Long.parseLong(idObj.toString());
-                        verifyAndUpdatePayment(mpPaymentId);
-                    } catch (Exception e) {
-                        log.warn("Could not verify Mercado Pago payment ID {}: {}", idObj, e.getMessage());
-                    }
+                    Long mpPaymentId = Long.parseLong(idObj.toString());
+                    verifyAndUpdatePayment(mpPaymentId);
                 }
             }
         }
