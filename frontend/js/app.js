@@ -484,14 +484,18 @@ function setupEventListeners() {
 
             window.Components.showToast(`Orden #${createdOrder.id} creada. Consultando pasarela de pago...`, "warning");
 
-            // Wait 1.2s for RabbitMQ & Payment microservice to process order
-            await new Promise(resolve => setTimeout(resolve, 1200));
-
-            const payment = await window.apiService.getPaymentForOrder(createdOrder.id);
+            // Poll payment microservice for up to 3 seconds for RabbitMQ & Mercado Pago preference creation
+            let payment = null;
+            for (let i = 0; i < 6; i++) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                payment = await window.apiService.getPaymentForOrder(createdOrder.id);
+                if (payment && payment.initPoint) break;
+            }
 
             if (payment && payment.initPoint) {
                 window.Components.showToast(`¡Redirigiendo a Mercado Pago!`, "success");
-                window.open(payment.initPoint, '_blank');
+                window.location.href = payment.initPoint;
+                return;
             } else {
                 window.Components.showToast(`¡Orden #${createdOrder.id} realizada con éxito!`, "success");
             }
@@ -825,8 +829,8 @@ function setupEventListeners() {
             try {
                 const payment = await window.apiService.getPaymentForOrder(orderId);
                 if (payment && payment.initPoint) {
-                    window.open(payment.initPoint, '_blank');
-                    window.Components.showToast("Redirigiendo a pasarela de Mercado Pago.", "success");
+                    window.Components.showToast("Redirigiendo a pasarela de Mercado Pago...", "success");
+                    window.location.href = payment.initPoint;
                 } else {
                     window.Components.showToast("No se encontró preferencia de pago para esta orden.", "warning");
                 }

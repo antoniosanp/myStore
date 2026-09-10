@@ -43,15 +43,7 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
     @PostConstruct
     public void init() {
         MercadoPagoConfig.setAccessToken(accessToken);
-
-        // Initialize immutable static back URLs once during service startup
-        this.staticBackUrls = PreferenceBackUrlsRequest.builder()
-                .success(successBackUrl)
-                .failure(failureBackUrl)
-                .pending(pendingBackUrl)
-                .build();
-
-        log.info("Mercado Pago SDK and static Back URLs initialized successfully");
+        log.info("Mercado Pago SDK initialized successfully. Success URL: {}, Notification URL: {}", successBackUrl, notificationUrl);
     }
 
     @Override
@@ -70,10 +62,18 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
                 items.add(item);
             }
 
+            PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
+                    .success(successBackUrl)
+                    .failure(failureBackUrl)
+                    .pending(pendingBackUrl)
+                    .build();
+
+            log.info("Building Mercado Pago preference for order {}. Success Back URL: {}, Notification URL: {}", 
+                    orderEvent.orderId(), backUrls.getSuccess(), notificationUrl);
+
             PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                     .items(items)
-                    .backUrls(staticBackUrls)
-                    .autoReturn("approved")
+                    .backUrls(backUrls)
                     .notificationUrl(notificationUrl)
                     .externalReference(orderEvent.orderId().toString())
                     .build();
@@ -84,7 +84,14 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
             log.info("Created Mercado Pago preference for order ID: {}", orderEvent.orderId());
             return preference.getInitPoint();
 
-        } catch (MPException | MPApiException e) {
+        } catch (MPApiException e) {
+            String responseContent = e.getApiResponse() != null ? e.getApiResponse().getContent() : e.getMessage();
+            log.error("Mercado Pago API error for order ID {}: Status {}, Details: {}", 
+                    orderEvent.orderId(), 
+                    e.getApiResponse() != null ? e.getApiResponse().getStatusCode() : "N/A", 
+                    responseContent);
+            throw new RuntimeException("Error processing Mercado Pago preference: " + responseContent, e);
+        } catch (MPException e) {
             log.error("Error creating Mercado Pago preference for order ID {}: {}", orderEvent.orderId(), e.getMessage(), e);
             throw new RuntimeException("Error processing Mercado Pago preference", e);
         }
