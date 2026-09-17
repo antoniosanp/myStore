@@ -30,3 +30,16 @@ Thumbs.db
 # Logs
 *.log
 **/logs/
+
+# Node & Frontend / React
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+build/
+**/build/
+.vite/
+**/.vite/
+.eslintcache
+*.tsbuildinfo
+
