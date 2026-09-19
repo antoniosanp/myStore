@@ -16,10 +16,8 @@ export interface RefreshTokenInput {
   refreshToken: string;
 }
 
-export interface UserRepository {
+export interface UserAuthRepository {
   login(input: LoginInput): Promise<AuthResponse>;
   register(input: RegisterInput): Promise<AuthResponse>;
   refreshToken(input: RefreshTokenInput): Promise<RefreshTokenResponse>;
 }
-
-export type UserAuthRepository = UserRepository;
