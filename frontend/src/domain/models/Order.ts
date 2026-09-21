@@ -26,17 +26,6 @@ export const OrderSchema = z.object({
 export const OrderListSchema = z.array(OrderSchema);
 export type Order = z.infer<typeof OrderSchema>;
 
-export const OrderItemRequestSchema = z.object({
-  productId: z.string().uuid(),
-  quantity: z.number().int().min(1, 'Quantity must be at least 1'),
-});
-export type OrderItemRequest = z.infer<typeof OrderItemRequestSchema>;
-
-export const CreateOrderRequestSchema = z.object({
-  items: z.array(OrderItemRequestSchema).min(1, 'Order must contain at least one item'),
-});
-export type CreateOrderRequest = z.infer<typeof CreateOrderRequestSchema>;
-
 export function isOrderPaid(order: Order): boolean {
   return order.status === 'PAID';
 }
