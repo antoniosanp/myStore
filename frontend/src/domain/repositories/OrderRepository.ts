@@ -10,7 +10,8 @@ export interface CreateOrderInput {
 }
 
 export interface OrderRepository {
-  getAll(): Promise<Order[]>;
+  getUserOrders(): Promise<Order[]>;
+  getAllAdmin(): Promise<Order[]>;
   getById(id: string): Promise<Order | null>;
   create(data: CreateOrderInput): Promise<Order>;
 }
