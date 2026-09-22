@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState, type ReactNode } from 'react';
 import { UserAuthApiRepository } from '../../infrastructure/repositories';
 import { makeLoginUseCase, makeRegisterUseCase, makeRefreshTokenUseCase } from '../../application/authUseCases';
 import type { LoginInput, RegisterInput } from '../../domain/repositories/UserRepository';
@@ -13,6 +14,7 @@ export interface AuthContextType extends AuthState {
   login: (input: LoginInput) => Promise<void>;
   register: (input: RegisterInput) => Promise<void>;
   logout: () => void;
+  refreshToken?: () => Promise<void>;
 }
 
 export interface AuthProviderProps {
@@ -33,6 +35,7 @@ export const AuthProvider = ({
   children,
   loginUseCase = defaultLoginUseCase,
   registerUseCase = defaultRegisterUseCase,
+  refreshTokenUseCase = defaultRefreshTokenUseCase,
 }: AuthProviderProps) => {
   const [userEmail, setUserEmail] = useState<string | null>(() => localStorage.getItem('userEmail'));
   const [role, setRole] = useState<string | null>(() => localStorage.getItem('userRole'));
@@ -66,6 +69,16 @@ export const AuthProvider = ({
     setRole(null);
   };
 
+  const refreshToken = async () => {
+    const token = localStorage.getItem('refreshToken');
+    if (!token) return;
+    const response = await refreshTokenUseCase({ refreshToken: token });
+    localStorage.setItem('accessToken', response.accessToken);
+    if (response.refreshToken) {
+      localStorage.setItem('refreshToken', response.refreshToken);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -75,6 +88,7 @@ export const AuthProvider = ({
         login,
         register,
         logout,
+        refreshToken,
       }}
     >
       {children}
