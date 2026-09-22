@@ -9,6 +9,8 @@ export const apiClient = axios.create({
   },
 });
 
+export const backendClient = apiClient;
+
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
