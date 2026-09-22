@@ -184,4 +184,10 @@ export const es: TranslationDictionary = {
     rights: 'Todos los derechos reservados.',
     tagline: 'Tienda de comercio electrónico moderna construida con Clean Architecture.',
   },
+  pagination: {
+    previous: 'Anterior',
+    next: 'Siguiente',
+    pageOf: 'Página {{current}} de {{total}}',
+    showing: 'Mostrando {{from}}-{{to}} de {{total}} productos',
+  },
 };

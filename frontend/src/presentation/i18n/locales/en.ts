@@ -182,6 +182,12 @@ export const en = {
     rights: 'All rights reserved.',
     tagline: 'The modern Clean Architecture e-commerce store.',
   },
+  pagination: {
+    previous: 'Previous',
+    next: 'Next',
+    pageOf: 'Page {{current}} of {{total}}',
+    showing: 'Showing {{from}}-{{to}} of {{total}} items',
+  },
 };
 
 export type TranslationDictionary = typeof en;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Edit2, Trash2 } from 'lucide-react';
 import type { Product } from '../../../domain/models/Product';
 import { formatProductPrice } from '../../../domain/models/Product';
@@ -7,6 +7,9 @@ import { Card } from '../../components/Card/Card';
 import { Badge } from '../../components/Badge/Badge';
 import { Button } from '../../components/Button/Button';
 import { Spinner } from '../../components/Spinner/Spinner';
+import { Pagination } from '../../components/Pagination';
+
+const ADMIN_ITEMS_PER_PAGE = 15;
 
 export interface AdminProductListProps {
   products: Product[];
@@ -22,6 +25,19 @@ export const AdminProductList = ({
   onDelete,
 }: AdminProductListProps) => {
   const { t } = useTranslation();
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(products.length / ADMIN_ITEMS_PER_PAGE);
+
+  const safeCurrentPage = useMemo(() => {
+    if (totalPages > 0 && currentPage > totalPages) return 1;
+    return currentPage;
+  }, [currentPage, totalPages]);
+
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (safeCurrentPage - 1) * ADMIN_ITEMS_PER_PAGE;
+    return products.slice(startIndex, startIndex + ADMIN_ITEMS_PER_PAGE);
+  }, [products, safeCurrentPage]);
 
   if (isLoading) {
     return (
@@ -40,7 +56,8 @@ export const AdminProductList = ({
   }
 
   return (
-    <Card variant="elevated" padding="none" style={{ overflowX: 'auto' }}>
+    <>
+      <Card variant="elevated" padding="none" style={{ overflowX: 'auto' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
         <thead>
           <tr
@@ -61,7 +78,7 @@ export const AdminProductList = ({
           </tr>
         </thead>
         <tbody>
-          {products.map((p) => (
+          {paginatedProducts.map((p) => (
             <tr
               key={p.id}
               style={{
@@ -124,5 +141,15 @@ export const AdminProductList = ({
         </tbody>
       </table>
     </Card>
+    {products.length > 0 && (
+      <Pagination
+        currentPage={safeCurrentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        totalItems={products.length}
+        itemsPerPage={ADMIN_ITEMS_PER_PAGE}
+      />
+    )}
+  </>
   );
 };

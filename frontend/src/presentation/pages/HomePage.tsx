@@ -2,7 +2,10 @@ import { useState, useMemo } from 'react';
 import { useProducts } from '../features/products/hooks/useProducts';
 import { ProductFilter } from '../features/products/ProductFilter';
 import { ProductGrid } from '../features/products/ProductGrid';
+import { Pagination } from '../components/Pagination';
 import { useTranslation } from '../i18n';
+
+const ITEMS_PER_PAGE = 12;
 
 export const HomePage = () => {
   const { products, isLoading } = useProducts();
@@ -12,6 +15,27 @@ export const HomePage = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState('name_asc');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
+
+  const handleInStockToggle = (inStock: boolean) => {
+    setInStockOnly(inStock);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (sort: string) => {
+    setSortBy(sort);
+    setCurrentPage(1);
+  };
 
   // Extract unique category names from catalog
   const categories = useMemo(() => {
@@ -54,6 +78,24 @@ export const HomePage = () => {
       });
   }, [products, searchQuery, selectedCategory, inStockOnly, sortBy]);
 
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+
+  const safeCurrentPage = useMemo(() => {
+    if (totalPages > 0 && currentPage > totalPages) return 1;
+    return currentPage;
+  }, [currentPage, totalPages]);
+
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (safeCurrentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredProducts, safeCurrentPage]);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 20px' }}>
       <div style={{ marginBottom: '24px' }}>
@@ -74,17 +116,27 @@ export const HomePage = () => {
 
       <ProductFilter
         searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        onSearchChange={handleSearchChange}
         selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
+        onCategoryChange={handleCategoryChange}
         categories={categories}
         inStockOnly={inStockOnly}
-        onInStockToggle={setInStockOnly}
+        onInStockToggle={handleInStockToggle}
         sortBy={sortBy}
-        onSortChange={setSortBy}
+        onSortChange={handleSortChange}
       />
 
-      <ProductGrid products={filteredProducts} isLoading={isLoading} />
+      <ProductGrid products={paginatedProducts} isLoading={isLoading} />
+
+      {!isLoading && filteredProducts.length > 0 && (
+        <Pagination
+          currentPage={safeCurrentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          totalItems={filteredProducts.length}
+          itemsPerPage={ITEMS_PER_PAGE}
+        />
+      )}
     </div>
   );
 };
