@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Package, Calendar, ArrowRight } from 'lucide-react';
-import type { Order } from '../../../../domain/models/Order';
-import { formatOrderAmount } from '../../../../domain/models/Order';
-import { useTranslation } from '../../../i18n';
-import { Card } from '../../../components/Card/Card';
-import { Badge } from '../../../components/Badge/Badge';
-import { Button } from '../../../components/Button/Button';
+import type { Order } from '../../../domain/models/Order';
+import { formatOrderAmount } from '../../../domain/models/Order';
+import { useTranslation } from '../../i18n';
+import { Card } from '../../components/Card/Card';
+import { Badge } from '../../components/Badge/Badge';
+import { Button } from '../../components/Button/Button';
 
 export interface OrderCardProps {
   order: Order;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Search } from 'lucide-react';
-import { useTranslation } from '../../../i18n';
-import { Input } from '../../../components/Input/Input';
-import { Select } from '../../../components/Select/Select';
+import { useTranslation } from '../../i18n';
+import { Input } from '../../components/Input/Input';
+import { Select } from '../../components/Select/Select';
 
 export interface ProductFilterProps {
   searchQuery: string;

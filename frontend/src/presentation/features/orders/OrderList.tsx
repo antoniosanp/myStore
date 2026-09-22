@@ -1,12 +1,12 @@
 import React from 'react';
 import { ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import type { Order } from '../../../../domain/models/Order';
-import { useTranslation } from '../../../i18n';
+import type { Order } from '../../../domain/models/Order';
+import { useTranslation } from '../../i18n';
 import { OrderCard } from './OrderCard';
-import { EmptyState } from '../../../components/EmptyState/EmptyState';
-import { Spinner } from '../../../components/Spinner/Spinner';
-import { Button } from '../../../components/Button/Button';
+import { EmptyState } from '../../components/EmptyState/EmptyState';
+import { Spinner } from '../../components/Spinner/Spinner';
+import { Button } from '../../components/Button/Button';
 
 export interface OrderListProps {
   orders: Order[];

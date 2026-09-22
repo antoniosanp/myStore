@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
-import { formatProductPrice } from '../../../../domain/models/Product';
-import { useCart } from '../../../context/CartContext';
-import { useTranslation } from '../../../i18n';
-import { Card } from '../../../components/Card/Card';
-import { Button } from '../../../components/Button/Button';
+import { formatProductPrice } from '../../../domain/models/Product';
+import { useCart } from '../../context/CartContext';
+import { useTranslation } from '../../i18n';
+import { Card } from '../../components/Card/Card';
+import { Button } from '../../components/Button/Button';
 
 export const CartSummary = () => {
   const { totalAmount, totalItems } = useCart();

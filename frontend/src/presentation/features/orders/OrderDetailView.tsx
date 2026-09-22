@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Calendar, CreditCard, CheckCircle2, AlertCircle } from 'lucide-react';
-import type { Order } from '../../../../domain/models/Order';
-import { formatOrderAmount } from '../../../../domain/models/Order';
-import { PaymentApiRepository } from '../../../../infrastructure/repositories/PaymentApiRepository';
-import { makeGetPaymentByOrderIdUseCase } from '../../../../application/paymentUseCases/getPaymentByOrderIdUseCase';
+import type { Order } from '../../../domain/models/Order';
+import { formatOrderAmount } from '../../../domain/models/Order';
+import { PaymentApiRepository } from '../../../infrastructure/repositories/PaymentApiRepository';
+import { makeGetPaymentByOrderIdUseCase } from '../../../application/paymentUseCases/getPaymentByOrderIdUseCase';
 import { usePayment } from '../payment/hooks/usePayment';
-import { useToast } from '../../../context/ToastContext';
-import { useTranslation } from '../../../i18n';
-import { Card } from '../../../components/Card/Card';
-import { Badge } from '../../../components/Badge/Badge';
-import { Button } from '../../../components/Button/Button';
-import { Spinner } from '../../../components/Spinner/Spinner';
+import { useToast } from '../../context/ToastContext';
+import { useTranslation } from '../../i18n';
+import { Card } from '../../components/Card/Card';
+import { Badge } from '../../components/Badge/Badge';
+import { Button } from '../../components/Button/Button';
+import { Spinner } from '../../components/Spinner/Spinner';
 
 export interface OrderDetailViewProps {
   order: Order;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, Package, ShoppingBag } from 'lucide-react';
-import type { Product } from '../../../domain/models/Product';
-import type { CreateProductInput, UpdateProductInput } from '../../../domain/repositories/ProductRepository';
+import type { Product } from '../../domain/models/Product';
+import type { CreateProductInput, UpdateProductInput } from '../../domain/repositories/ProductRepository';
 import { useAdmin } from '../features/admin/hooks/useAdmin';
 import { AdminProductList } from '../features/admin/AdminProductList';
 import { AdminOrderList } from '../features/admin/AdminOrderList';

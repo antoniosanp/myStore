@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import type { Order } from '../../../domain/models/Order';
-import { OrderApiRepository } from '../../../infrastructure/repositories/OrderApiRepository';
-import { makeGetOrderByIdUseCase } from '../../../application/orderUseCases/getOrderByIdUseCase';
+import type { Order } from '../../domain/models/Order';
+import { OrderApiRepository } from '../../infrastructure/repositories/OrderApiRepository';
+import { makeGetOrderByIdUseCase } from '../../application/orderUseCases/getOrderByIdUseCase';
 import { OrderDetailView } from '../features/orders/OrderDetailView';
 import { Spinner } from '../components/Spinner/Spinner';
 import { EmptyState } from '../components/EmptyState/EmptyState';

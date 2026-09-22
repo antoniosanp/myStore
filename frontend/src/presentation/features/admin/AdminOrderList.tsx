@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink } from 'lucide-react';
-import type { Order, OrderStatusEnum } from '../../../../domain/models/Order';
-import { formatOrderAmount } from '../../../../domain/models/Order';
-import { useTranslation } from '../../../i18n';
-import { Card } from '../../../components/Card/Card';
-import { Badge } from '../../../components/Badge/Badge';
-import { Button } from '../../../components/Button/Button';
-import { Select } from '../../../components/Select/Select';
-import { Spinner } from '../../../components/Spinner/Spinner';
+import type { Order, OrderStatusEnum } from '../../../domain/models/Order';
+import { formatOrderAmount } from '../../../domain/models/Order';
+import { useTranslation } from '../../i18n';
+import { Card } from '../../components/Card/Card';
+import { Badge } from '../../components/Badge/Badge';
+import { Button } from '../../components/Button/Button';
+import { Select } from '../../components/Select/Select';
+import { Spinner } from '../../components/Spinner/Spinner';
 
 export interface AdminOrderListProps {
   orders: Order[];

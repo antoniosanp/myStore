@@ -1,12 +1,12 @@
 import React from 'react';
 import { Edit2, Trash2 } from 'lucide-react';
-import type { Product } from '../../../../domain/models/Product';
-import { formatProductPrice } from '../../../../domain/models/Product';
-import { useTranslation } from '../../../i18n';
-import { Card } from '../../../components/Card/Card';
-import { Badge } from '../../../components/Badge/Badge';
-import { Button } from '../../../components/Button/Button';
-import { Spinner } from '../../../components/Spinner/Spinner';
+import type { Product } from '../../../domain/models/Product';
+import { formatProductPrice } from '../../../domain/models/Product';
+import { useTranslation } from '../../i18n';
+import { Card } from '../../components/Card/Card';
+import { Badge } from '../../components/Badge/Badge';
+import { Button } from '../../components/Button/Button';
+import { Spinner } from '../../components/Spinner/Spinner';
 
 export interface AdminProductListProps {
   products: Product[];

@@ -12,13 +12,13 @@ export const App = () => {
     <BrowserRouter>
       <ThemeProvider>
         <I18nProvider>
-          <AuthProvider>
-            <CartProvider>
-              <ToastProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <CartProvider>
                 <AppRouter />
-              </ToastProvider>
-            </CartProvider>
-          </AuthProvider>
+              </CartProvider>
+            </AuthProvider>
+          </ToastProvider>
         </I18nProvider>
       </ThemeProvider>
     </BrowserRouter>

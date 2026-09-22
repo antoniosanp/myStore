@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, CreditCard, ShieldCheck, ShoppingBag } from 'lucide-react';
-import { formatProductPrice } from '../../../../domain/models/Product';
+import { formatProductPrice } from '../../../domain/models/Product';
 import { useCheckout } from './hooks/useCheckout';
-import { useTranslation } from '../../../i18n';
-import { Card } from '../../../components/Card/Card';
-import { Button } from '../../../components/Button/Button';
-import { EmptyState } from '../../../components/EmptyState/EmptyState';
+import { useTranslation } from '../../i18n';
+import { Card } from '../../components/Card/Card';
+import { Button } from '../../components/Button/Button';
+import { EmptyState } from '../../components/EmptyState/EmptyState';
 
 export const CheckoutView = () => {
   const { items, totalAmount, isSubmitting, statusMessage, error, placeOrder } = useCheckout();

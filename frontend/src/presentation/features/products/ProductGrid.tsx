@@ -1,10 +1,10 @@
 import React from 'react';
 import { PackageSearch } from 'lucide-react';
-import type { Product } from '../../../../domain/models/Product';
-import { useTranslation } from '../../../i18n';
+import type { Product } from '../../../domain/models/Product';
+import { useTranslation } from '../../i18n';
 import { ProductCard } from './ProductCard';
-import { EmptyState } from '../../../components/EmptyState/EmptyState';
-import { Spinner } from '../../../components/Spinner/Spinner';
+import { EmptyState } from '../../components/EmptyState/EmptyState';
+import { Spinner } from '../../components/Spinner/Spinner';
 
 export interface ProductGridProps {
   products: Product[];

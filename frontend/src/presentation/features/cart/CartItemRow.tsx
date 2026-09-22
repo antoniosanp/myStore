@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, Plus, Minus, Package } from 'lucide-react';
-import type { CartItem } from '../../../context/CartContext';
-import { formatProductPrice } from '../../../../domain/models/Product';
-import { useCart } from '../../../context/CartContext';
-import { useTranslation } from '../../../i18n';
+import type { CartItem } from '../../context/CartContext';
+import { formatProductPrice } from '../../../domain/models/Product';
+import { useCart } from '../../context/CartContext';
+import { useTranslation } from '../../i18n';
 
 export interface CartItemRowProps {
   item: CartItem;

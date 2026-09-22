@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import type { Product } from '../../../../domain/models/Product';
-import type { CreateProductInput, UpdateProductInput } from '../../../../domain/repositories/ProductRepository';
-import { useTranslation } from '../../../i18n';
-import { Modal } from '../../../components/Modal/Modal';
-import { Input } from '../../../components/Input/Input';
-import { Select } from '../../../components/Select/Select';
-import { Button } from '../../../components/Button/Button';
+import type { Product } from '../../../domain/models/Product';
+import type { CreateProductInput, UpdateProductInput } from '../../../domain/repositories/ProductRepository';
+import { useTranslation } from '../../i18n';
+import { Modal } from '../../components/Modal/Modal';
+import { Input } from '../../components/Input/Input';
+import { Select } from '../../components/Select/Select';
+import { Button } from '../../components/Button/Button';
 import type { CategoryItem, ManufacturerItem } from './hooks/useAdmin';
 
 export interface AdminProductModalProps {

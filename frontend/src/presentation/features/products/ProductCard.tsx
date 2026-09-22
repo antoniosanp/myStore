@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Package } from 'lucide-react';
-import type { Product } from '../../../../domain/models/Product';
-import { formatProductPrice } from '../../../../domain/models/Product';
-import { useCart } from '../../../context/CartContext';
-import { useTranslation } from '../../../i18n';
-import { Card } from '../../../components/Card/Card';
-import { Badge } from '../../../components/Badge/Badge';
-import { Button } from '../../../components/Button/Button';
+import type { Product } from '../../../domain/models/Product';
+import { formatProductPrice } from '../../../domain/models/Product';
+import { useCart } from '../../context/CartContext';
+import { useTranslation } from '../../i18n';
+import { Card } from '../../components/Card/Card';
+import { Badge } from '../../components/Badge/Badge';
+import { Button } from '../../components/Button/Button';
 
 export interface ProductCardProps {
   product: Product;
